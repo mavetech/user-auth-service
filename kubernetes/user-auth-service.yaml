@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-auth-service-nodeport
+spec:
+  type: NodePort
+  selector:
+    app: user-auth-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-auth-service
+spec:
+  selector:
+    app: user-auth-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-auth-config
+data:
+  url: user-data-service.default.svc.cluster.local:8082
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-auth-service
+  template:
+    metadata:
+      labels:
+        app: user-auth-service
+    spec:
+      containers:
+        - name: user-auth-service
+          image: mak1995/user-auth-service:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: USER_DATA_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: user-auth-config
+                  key: url
+          volumeMounts:         # Corrected indentation
+            - name: config-volume
+              mountPath: /src/main/resources
+      volumes:                # Corrected indentation
+        - name: config-volume
+          configMap:
+            name: user-auth-config
