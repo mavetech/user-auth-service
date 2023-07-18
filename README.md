@@ -3,6 +3,7 @@
 ## Dockerize and push to dockerhub
 - `docker build -t user-auth-service:latest .`
 - `docker tag user-auth-service:latest <dockerhub-username>/user-auth-service:latest`
+- `docker push <dockerhub-username>/user-auth-service:latest`
 
 ## Install Minikube to run on K8
 - Generate the command from the link to install minikube: https://minikube.sigs.k8s.io/docs/start/
