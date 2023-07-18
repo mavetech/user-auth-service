@@ -1,0 +1,38 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+build/
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+
+# Ignore Maven specific files
+.mvn/
+mvnw
+mvnw.cmd
+mvn-wrapper.jar
+
+# Ignore system-specific files
+*.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore compiled bytecode
+*.class
+
+# Ignore package files
+*.jar
+*.war
+*.ear
