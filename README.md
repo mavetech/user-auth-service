@@ -1,5 +1,8 @@
 # user-auth-service
 
+## Build project
+- mvn: clean package
+
 ## Dockerize and push to dockerhub
 - `docker build -t user-auth-service:latest .`
 - `docker tag user-auth-service:latest <dockerhub-username>/user-auth-service:latest`
