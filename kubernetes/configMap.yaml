@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-auth-config
+data:
+  url: user-data-service.default.svc.cluster.local:8082

@@ -1,38 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-auth-service-nodeport
-spec:
-  type: NodePort
-  selector:
-    app: user-auth-service
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8081
-      targetPort: 8081
-      nodePort: 30001
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-auth-service
-spec:
-  selector:
-    app: user-auth-service
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8081
-      targetPort: 8081
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: user-auth-config
-data:
-  url: user-data-service.default.svc.cluster.local:8082
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
