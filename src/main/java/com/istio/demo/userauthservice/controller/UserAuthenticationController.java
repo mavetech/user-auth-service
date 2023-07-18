@@ -34,6 +34,7 @@ public class UserAuthenticationController {
     private String fetchUserDataFromSecondMicroservice(String username) {
         String secondMicroserviceBaseUrl = "http://" + userDataServiceUrl+ "/user_data/" + username;
         log.info("URI: "+secondMicroserviceBaseUrl);
+        log.info("This is new!!!");
         try {
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     secondMicroserviceBaseUrl,
