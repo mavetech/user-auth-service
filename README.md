@@ -18,6 +18,7 @@
 ## Test Service on K8
 -  `minikube ip`
 -  `curl -X POST -H "Content-Type: application/json" -d '{"username": "user1", "password": "your_password"}' http://<minikube-ip>:<NodePort-port>/login`
+-  Or kubectl port-forward svc/<user-auth-service> <port>:<port-user-auth-service> then curl
 
 ## Install Istio
 - Create minikube cluster with adequate resources for istio `minikube start --cpus 6 --memory 8192`
