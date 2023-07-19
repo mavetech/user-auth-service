@@ -17,6 +17,15 @@ spec:
           image: mak1995/user-auth-service:latest
           ports:
             - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
           env:
             - name: USER_DATA_SERVICE_URL
               valueFrom:
