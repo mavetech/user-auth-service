@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: user-data-service
+spec:
+  host: user-data-service
+  subsets:
+    - name: v2
+      labels:
+        version: v2
+    - name: latest
+      labels:
+        version: latest

@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user-data-service
+spec:
+  hosts:
+    - user-data-service
+  http:
+    - route:
+        - destination:
+            host: user-data-service
+      retries:
+        attempts: 10
+        perTryTimeout: 2s

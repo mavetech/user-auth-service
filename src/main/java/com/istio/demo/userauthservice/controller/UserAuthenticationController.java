@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,19 +23,20 @@ public class UserAuthenticationController {
     private RestTemplate restTemplate;
 
     @Value("${user-data-service.uri}")
-    private String url;
-
-    private String userDataServiceUrl;
+    private String uri;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserCredentials credentials) {
         log.info("Inside /login controller");
         String userDataResponse = fetchUserDataFromSecondMicroservice(credentials.getUsername());
+        if(userDataResponse.equals("Error: Unable to fetch user data from user-data-service")) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Error : Unable to fetch user data from user-data-service");
+        }
         return ResponseEntity.ok(userDataResponse);
     }
 
     private String fetchUserDataFromSecondMicroservice(String username) {
-        String secondMicroserviceBaseUrl = "http://" + url+ "/user_data/" + username;
+        String secondMicroserviceBaseUrl = "http://" + uri+ "/user_data/" + username;
         log.info("URI: "+secondMicroserviceBaseUrl);
         log.info("This is new!!!");
         try {
