@@ -1,6 +1,6 @@
 server.port: 8081
 user-data-service:
-  url: ${USER_DATA_SERVICE_URL:}
+  uri: ${USER_DATA_SERVICE_URI:localhost:8082}
 logging:
   level:
     ROOT: INFO

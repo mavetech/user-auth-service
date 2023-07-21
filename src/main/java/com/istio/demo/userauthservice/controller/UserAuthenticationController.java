@@ -21,7 +21,9 @@ public class UserAuthenticationController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${user-data-service.url}")
+    @Value("${user-data-service.uri}")
+    private String url;
+
     private String userDataServiceUrl;
 
     @PostMapping("/login")
@@ -32,7 +34,7 @@ public class UserAuthenticationController {
     }
 
     private String fetchUserDataFromSecondMicroservice(String username) {
-        String secondMicroserviceBaseUrl = "http://" + userDataServiceUrl+ "/user_data/" + username;
+        String secondMicroserviceBaseUrl = "http://" + url+ "/user_data/" + username;
         log.info("URI: "+secondMicroserviceBaseUrl);
         log.info("This is new!!!");
         try {
