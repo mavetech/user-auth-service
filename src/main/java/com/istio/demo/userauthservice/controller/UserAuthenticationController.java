@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
@@ -51,8 +52,6 @@ public class UserAuthenticationController {
 
             log.info("Response: " + responseEntity);
 
-            log.info("Status: " + responseEntity.getStatusCode());
-
             // Check if the HTTP status code is 404 (Not Found)
             if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
                 // Handle the 404 case here (e.g., return a specific message)
@@ -63,11 +62,12 @@ public class UserAuthenticationController {
 
             return ResponseEntity.ok(responseBody);
 
-        } catch (HttpClientErrorException ex) {
+        }
+        catch (HttpServerErrorException ex) { // Should be HttpServerErrorException
             // Handle the HttpClientErrorException
             // For example, you can log the error or return a specific error message
             log.error("HttpClientErrorException: " + ex.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Unable to fetch user data from user-data-service");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Error: Service not available");
         }
     }
 }

@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: user-auth-and-data-authz-policy
+spec:
+  selector:
+    matchLabels:
+      app: user-auth-service  # Match the labels of user-auth-service pods
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/default/sa/user-auth-service"] # Allow access from user-auth-service
+      to:
+        - operation:
+            methods: ["GET", "POST", "PUT", "DELETE"]  # Define allowed HTTP methods
+          hosts: ["user-data-service.default.svc.cluster.local"] # Match the hostname of user-data-service
