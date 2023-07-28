@@ -1,17 +1,17 @@
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: user-auth-and-data-authz-policy
+  name: user-auth-data-policy
+  namespace: default
 spec:
   selector:
     matchLabels:
-      app: user-auth-service  # Match the labels of user-auth-service pods
+      app: user-data-service  # Match the labels of user-data-service pods
   action: ALLOW
   rules:
     - from:
         - source:
-            principals: ["cluster.local/ns/default/sa/user-auth-service"] # Allow access from user-auth-service
+            principals: ["cluster.local/ns/default/sa/user-auth-service"] # Allow access from user-auth-service (SPIFFE Identity - derived from namespace service account)
       to:
         - operation:
             methods: ["GET", "POST", "PUT", "DELETE"]  # Define allowed HTTP methods
-          hosts: ["user-data-service.default.svc.cluster.local"] # Match the hostname of user-data-service

@@ -1,6 +1,9 @@
 # Use the official OpenJDK image as the base image
 FROM openjdk:22-slim
 
+# Update the package lists and install curl
+RUN apt-get update && apt-get install -y curl
+
 # Set the working directory inside the container
 WORKDIR /app
 

@@ -4,11 +4,12 @@ metadata:
   name: user-auth-service-retry
 spec:
   hosts:
-    - user-data-service-v2
+    - user-data-service
   http:
     - route:
         - destination:
-            host: user-data-service-v2
+            host: user-data-service
+            subset: v2
       retries:
         attempts: 20
         perTryTimeout: 2s
