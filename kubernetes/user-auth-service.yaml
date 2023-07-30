@@ -22,6 +22,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-auth-service
+  labels:
+    name: user-data-service
 spec:
   replicas: 1
   selector:
@@ -32,7 +34,7 @@ spec:
       labels:
         app: user-auth-service
     spec:
-      serviceAccountName: user-auth-service
+#      serviceAccountName: user-auth-service
       containers:
         - name: user-auth-service
           image: mak1995/user-auth-service:latest
