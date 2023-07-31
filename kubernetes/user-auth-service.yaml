@@ -34,7 +34,7 @@ spec:
       labels:
         app: user-auth-service
     spec:
-#      serviceAccountName: user-auth-service
+#      serviceAccountName: user-auth-service # uncommented
       containers:
         - name: user-auth-service
           image: mak1995/user-auth-service:latest
