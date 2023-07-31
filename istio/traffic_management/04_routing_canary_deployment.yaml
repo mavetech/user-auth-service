@@ -11,8 +11,8 @@ spec:
         - destination:
             host: user-data-service.default.svc.cluster.local
             subset: v1
-          weight: 10
+          weight: 30
         - destination:
             host: user-data-service.default.svc.cluster.local
             subset: v2
-          weight: 90
+          weight: 80
