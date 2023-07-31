@@ -1,0 +1,34 @@
+# Sidecar describes the configuration of the sidecar proxy that mediates inbound and outbound communication to the workload instance it is attached to.
+# By default, Istio will program all sidecar proxies in the mesh with the necessary configuration required to reach every workload instance in the mesh, as well as accept traffic on all the ports associated with the workload.
+# The Sidecar configuration provides a way to fine tune the set of ports, protocols that the proxy will accept when forwarding traffic to and from the workload.
+# In addition, it is possible to restrict the set of services that the proxy can reach when forwarding outbound traffic from workload instances.
+
+#The following example declares a Sidecar configuration in the prod-us1 namespace for all pods with labels app: ratings belonging to the ratings.prod-us1 service.
+# The workload accepts inbound HTTP traffic on port 9080.
+# The traffic is then forwarded to the attached workload instance listening on a Unix domain socket.
+#  In the egress direction, in addition to the istio-system namespace, the sidecar proxies only HTTP traffic bound for port 9080 for services in the prod-us1 namespace.
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: ratings
+  namespace: prod-us1
+spec:
+  workloadSelector:
+    labels:
+      app: ratings
+  ingress:
+    - port:
+        number: 9080
+        protocol: HTTP
+        name: somename
+      defaultEndpoint: unix:///var/run/someuds.sock
+  egress:
+    - port:
+        number: 9080
+        protocol: HTTP
+        name: egresshttp
+      hosts:
+        - "prod-us1/*"
+    - hosts:
+        - "istio-system/*"

@@ -1,0 +1,19 @@
+# Specifies maximum number of times an envoy proxy attempt to connect to a service, if the initial call fails
+# Enhance service availability and app performance by making sure calls do not fail due to transient problems such as temporary overloaded service or network
+# Two default retries
+# Set retry setting per service
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user-auth-service-retry
+spec:
+  hosts:
+    - user-data-service
+  http:
+    - route:
+        - destination:
+            host: user-data-service
+            subset: v2
+      retries:
+        attempts: 3
+        perTryTimeout: 2s

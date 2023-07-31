@@ -1,0 +1,19 @@
+# Mesh external serviceEntry adds external service to Istio service registry
+# Then Able to apply destination rule and virtualservice
+# allows you to define how Istio should route traffic to external services outside the service mesh.
+# It is used to enable Istio to manage traffic to services that are running outside of the Kubernetes cluster or outside the Istio service mesh.
+# extend Istio's traffic management capabilities to reach external services
+# you define how the traffic to the external service should be routed, what ports to use, and other configuration details.
+# This way, Istio's features like traffic routing, load balancing, timeouts, and retries can be applied to requests going to the external services.
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: user-auth-service-entry
+  namespace: otherns
+spec:
+  hosts:
+    - user-auth-service.otherns.svc.cluster.local
+  ports:
+    - number: 8081   # Replace this with the actual port number of the user-auth-service
+      name: http
+      protocol: HTTP

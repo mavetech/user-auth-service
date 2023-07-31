@@ -1,0 +1,32 @@
+# After configuring failure recevery policies
+# Use fault-injection to test the failure recovery capability of the application as a whole
+# Introduces error into the system to ensure that it can withstand and recover from failures
+# Useful to ensure that failure recovery policies are not too restrictive
+# It lets you inject faults at the application layer instead of the network layer.
+# inject two type of fault in virtualservice: delays and aborts'
+# Delays(time failures): mimic increased network latency or overloaded upstream service
+# Aborts(crash failures): mimic failures in up stream services, manifest in form of http error code or tcp connection failure
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user-data-service-fault-injection
+spec:
+  hosts:
+    - user-data-service
+  http:
+    - route:
+        - destination:
+            host: user-data-service
+            subset: v1
+      fault:
+        delay:
+          percent: 1
+          fixedDelay: 5s
+    - route:
+        - destination:
+            host: user-data-service
+            subset: v2
+      fault:
+        delay:
+          percent: 1
+          fixedDelay: 5s

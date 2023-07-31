@@ -1,0 +1,20 @@
+# To create resilient microservice applications
+# Set limits for calls to individual host within the service such as the number of concurrent cnnections
+# or the number of times call to the host has failed
+# Once limit reached, the circuit breaker trips and stops further connections to the host
+# Enables fast failure, instead of trying to connect to a overloaded or failing host
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: user-data-service-destination-rule
+spec:
+  host: user-data-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 5s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
