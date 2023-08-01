@@ -1,0 +1,7 @@
+Istio is an open-source service mesh that provides a unitified platform to connect, manage and secure microservices
+Istio is built on top of envoy, which is a high performance proxy that handles all traffic between microservices.
+Istio works by deploying a sidecar container along side each microservice instance
+Sidecar container intercepts all traffic to and from the microservice, handling traffic routing, load balancing, service discovery and other tasks
+Istio also provides advanced traffic management features like canary deployment, AB testing and fault injection
+Istio's Citadel component is responsible for issuing, distributing, and rotating the TLS certificates used by the sidecar proxies for mTLS communication.
+mTLS in Istio is well-suited for securing internal communication within the service mesh. It provides a uniform and centralized way to secure service-to-service communication and ensures that all communication within the mesh is encrypted and authenticated.

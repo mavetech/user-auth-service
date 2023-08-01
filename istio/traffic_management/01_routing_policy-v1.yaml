@@ -5,9 +5,9 @@ metadata:
   name: user-data-service
 spec:
   hosts:
-    - user-data-service.default.svc.cluster.local
+    - user-data-service #.default.svc.cluster.local
   http:
     - route:
         - destination:
-            host: user-data-service.default.svc.cluster.local
+            host: user-data-service #.default.svc.cluster.local
             subset: v1

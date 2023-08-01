@@ -13,7 +13,8 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "*"  # Replace with the hostname or domain name for the external traffic
+        - "user-auth.example.com"
+        - "my-grafana-service.com"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -25,7 +26,10 @@ spec:
   gateways:
     - default/user-auth-gateway  # Replace 'default' with the actual namespace where the Gateway is deployed
   http:
-    - route:
+    - match:
+        - url:
+            prefix: /
+      route:
         - destination:
             host: user-auth-service
             port:
@@ -41,7 +45,10 @@ spec:
   gateways:
     - default/user-auth-gateway  # Replace 'default' with the actual namespace where the Gateway is deployed
   http:
-    - route:
+    - match:
+        - url:
+            prefix: /
+      route:
         - destination:
             host: my-grafana-service
             port:

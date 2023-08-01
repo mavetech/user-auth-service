@@ -1,0 +1,10 @@
+# allows you to define policies for authenticating and authorizing communication between services.
+# mTLS enabled by default in serviceMesh for service to service communication
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: default
+spec:
+  mtls:
+    mode: STRICT # restricts communication from services in a different namespace

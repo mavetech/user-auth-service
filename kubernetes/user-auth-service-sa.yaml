@@ -1,3 +1,4 @@
+# service account for a service provides a unique identity, helps establish trust between services, and enables secure communication with external services or services within the Kubernetes cluster
 apiVersion: v1
 kind: ServiceAccount
 metadata:

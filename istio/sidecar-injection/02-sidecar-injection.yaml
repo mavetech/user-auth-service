@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-data-service
+  namespace: default
+  labels:
+    app: user-data-service
+    version: v2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-data-service
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: user-data-service
+        version: v2
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: user-data-service
+          image: user-data-service:v2
+
+# istioctl kube-inject -f deployment.yaml | kubectl apply -f -

@@ -1,5 +1,7 @@
 1. Install Istio
    Check namespace istio-system
+   Check istio CRDs created. kubectl get crds | grep istio.io
+   Check endpoints -> kubectl get endpoints -n namespace
    Deploy services
    Check services
    Add label to namespace for instio

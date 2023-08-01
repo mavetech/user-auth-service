@@ -1,0 +1,33 @@
+# Allows you to define fine-grained access control rules based on service identities, request headers, and other attributes
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: user-auth-data-policy
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: user-data-service  # Match the labels of user-data-service pods
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals: ["cluster.local/ns/default/sa/user-auth-service"] # Allow access from user-auth-service (SPIFFE Identity - derived from namespace service account)
+ # cluster.local/ns/default/sa/default for default service account
+      to:
+        - operation:
+            methods: ["GET", "POST", "PUT", "DELETE"]  # Define allowed HTTP methods
+
+# SPIFFE (Secure Production Identity Framework For Everyone) is a set of standards and specifications designed to provide secure identity and authentication for workloads in modern distributed systems, including Kubernetes clusters
+# All communication between services within the mesh is authenticated using mTLS, and services use their SPIFFE identities to establish trust and securely communicate with each other.
+
+# in the context of Istio, the service account of a service in Kubernetes is used to create a SPIFFE Identity.
+# When Istio's sidecar proxy is injected into a Kubernetes pod, it leverages the pod's service account to generate and manage the corresponding SPIFFE identity for the service.
+
+# Istio provides
+# RequestAuthentication: for external clients
+# JWT Validation: for external clients and services
+# Rate Limiting: control rate of incoming requests to services(against DDoS)
+# Network Policies: controlling fraffic between services based on source, destin, ports and protocols
+# Certificate Management: (Citadel) manages the issuance and rotation of certificates used for mTLS
+# Secure Gateway(Ingress): ecure ingress for external clients, allowing you to enforce mTLS for incoming traffic to services in the mesh.

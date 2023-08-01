@@ -7,13 +7,15 @@ kind: DestinationRule
 metadata:
   name: user-data-service
 spec:
-  host: user-data-service
+  host: user-data-service # target host
   subsets:
     - name: v1
       labels:
+        app: user-data-service
         version: v1
     - name: v2
       labels:
+        app: user-data-service
         version: v2
   trafficPolicy:
     loadBalancer:
