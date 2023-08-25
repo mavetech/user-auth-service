@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-data-service
+  labels:
+    name: user-data-service
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-data-service
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: user-data-service
+        version: v1
+    spec:
+      containers:
+        - name: user-data-service
+          image: mak1995/user-data-service:v1
+          ports:
+            - containerPort: 8082

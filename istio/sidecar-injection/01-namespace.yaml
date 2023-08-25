@@ -4,3 +4,4 @@ metadata:
   name: default
   labels:
     istio-injected: enabled
+# kubectl label namespace default istio-injection=enabled

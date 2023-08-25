@@ -22,7 +22,7 @@ spec:
       labels:
         app: user-data-service
         version: v2
-        sidecar.istio.io/inject: "true"
+#        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: user-data-service

@@ -1,53 +1,115 @@
-1. Install Istio
-   Check namespace istio-system
-   Check istio CRDs created. kubectl get crds | grep istio.io
-   Check endpoints -> kubectl get endpoints -n namespace
-   Deploy services
-   Check services
-   Add label to namespace for instio
+1.
+  Start Minikube -> minikube start --cpus=4 --memory=4096
+  Setup IstioCtl -> export PATH="$PATH:/Users/muha5752/Learning/installation/istio-1.18.1/bin/"
+  Install Istio - istioctl install
+  Check namespace -> kubectl get ns
+  Check istio CRDs created -> kubectl get crds | grep istio.io
+  Check endpoints -> kubectl get endpoints -n namespace
+  Deploy k8 auth and data services (kubectl apply -f kubernetes/user-auth-service/deploy-v1.yaml)
+  Check k8 services
+  Check namespaces for labels -> kubectl get ns --show-labels
+  Add label to namespace for instio -> kubectl label namespace default istio-injection=enabled
+
 
 2. Check services
-   Redeploy services
-   Port-forward to user-auth-service
-   Curl request to user-auth-service(traffic to both versions of the data service)
+  Redeploy services -> (kubectl delete pods --all)
+  Port-forward to user-auth-service
+  Curl request to user-auth-service(traffic to both versions of the data service)
+  while true; do curl -X POST -H "Content-Type: application/json" -d '{"username": "user1", "password": "your_password"}' http://localhost:8082/login; sleep 1; done
+
+
+2.1 Strict mTLS
+   Create otherns namespace -> (kubectl create ns otherns)
+   Create user-auth-servie in otherns -> (kubectl apply -f kubernetes/user-auth-service/deploy-v1.yaml -n otherns)
+   Curl to user-data-service from user-auth-service in otherns (curl user-data-service.default.svc.cluster.local:8082/user_data/user1)
+   Implement strict mTLS -> kubectl apply -f istio/security/01_mtls_strict.yaml
+
+
+2.2 AuthorizationPolicy
+   Exec into user-auth-service in default
+   Curl user-data-service from user-auth-servicein default (curl user-data-service:8082/user_data/user1)
+   Apply AuthorizationPolicy -> kubectl apply -f istio/security/02_authorizationPolicy.yaml
+   Curl again (failed)
+   Redeploy user-auth-service with service-account and parameter -> kubectl apply -f kubernetes/user-auth-service
+   Curl -> curl user-data-service:8082/user_data/user1
+
 
 3. Traffic Management - Routing Policy
-   VirtualService define routing rules
-   Destination Rules - Configure what happens to the traffic to that destination
-   01_routing_policy-v1 - sends traffic only to v1 (kubectl apply -f istio/traffic_management/01_routing_policy-v1.yaml)
-   503 - apply destinatio-rule (kubectl apply -f istio/traffic_management/02_destination_rule.yaml)
-   All Traffic now goes to the v1 service
+  VirtualService define routing rules (kubectl apply -f istio/traffic_management/01_routing_policy-v1.yaml)
+  Destination Rules - Configure what happens to the traffic to that destination (kubectl apply -f istio/traffic_management/02_destination_rule.yaml)
+  All Traffic now goes to the v1 service
 
-4. Delete the 01_routing_policy-v1.yaml
-   Apply 03_routing_policy_header.yml to direct traffic with header to v2, and other to v1
 
-5. Delete 03_routing_policy_header.yml
-   Apply 04_routing_canary_deployment for canary deployment (kubectl apply -f istio/traffic_management/04_routing_canary_deployment.yaml)
-   30% traffic goes to v1 and 70% to v2
+  while true; do curl -X POST -H "Content-Type: application/json" -d '{"username": "user1", "password": "your_password"}' http://localhost:8080/login; sleep 1; done
+
+
+4. Delete the 01_routing_policy-v1.yaml (kubectl delete -f istio/traffic_management/01_routing_policy-v1.yaml)
+  Apply 03_routing_policy_header.yml to direct traffic with header to v2, and other to v1
+
+
+5. Apply 04_routing_canary_deployment for canary deployment (kubectl apply -f istio/traffic_management/04_routing_canary_deployment.yaml)
+  30% traffic goes to v1 and 70% to v2
+
 
 6. Ingress-Gateway pod exists
-    Ingress-Gateway Service missing
-    Apply 05-gateway.yaml to create gateway object, virtual service and Loadbalancer (kubectl apply -f istio/traffic_management/05_gateway.yaml)
-    Check pod and svc -n istio-system
-    Run minikube tunnel
+  Ingress-Gateway Service missing/exists
+  Apply 05-gateway.yaml to create gateway object, virtual service and Loadbalancer (kubectl apply -f istio/traffic_management/05_gateway.yaml)
+  Check pod and svc -n istio-system
+  Run minikube tunnel
+
 
 7. Delete 05_gateway.yaml (kubectl delete -f istio/traffic_management/05_gateway.yaml )
-    Apply 06_gateway (kubectl apply -f istio/traffic_management/06_gateway_multi_host_svc.yaml)
-    Check 06_gateway_multi.yaml
-    check /etc/hosts
-    Request: curl -X POST -H "Content-Type: application/json" -d '{"username": "user1", "password": "your_password"}' http://user-auth.example.com/login
-    In browser: my-grafana-service.com
+   Apply 06_gateway (kubectl apply -f istio/traffic_management/06_gateway_multi_host_svc.yaml)
+   Check 06_gateway_multi.yaml
+   check /etc/hosts
+   Request: curl -X POST -H "Content-Type: application/json" -d '{"username": "user1", "password": "your_password"}' http://user-auth.example.com/login
+   In browser: my-grafana-service.com
 
 
-8. Security and Authorization
-   Create namespace otherns
-   Create user-auth-service in otherns
-   Exec into user-auth-service in otherns namespace
-   Curl user-data-service from there - curl user-data-service.default.svc.cluster.local:8082/user_data/user1
-   Apply istio/security (strict mTls) - kubectl apply -f istio/security
-   Curl again (fails) - curl user-data-service.default.svc.cluster.local:8082/user_data/user1
-   Curl from default ns - possible !! -> prevent through authorizationPolicy
-   Apply istio/policy - kubectl apply -f istio/policy
-   For SPIFFE Identity - Apply serviceaccount for user-auth-service in otherns - kubectl apply -f kubernetes/user-auth-service-sa.yaml
-   Redeploy user-auth-service with "serviceAccountName" parameter
+8. Fault Injection (kubectl apply -f istio/traffic_management/12_fault_injection.yaml)
+
+
+9. Observability
+
+
+10. Request Timeouts (https://istio.io/latest/docs/tasks/traffic-management/request-timeouts/)
+   Deploy Service:
+       cd /Users/muha5752/Learning/installation/istio-1.18.1/samples/bookinfo/platform/kube
+       kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+   Create gatweway:
+       kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+   Set INGRESS_HOST and INGRESS_PORT
+       minikube tunneel
+       export INGRESS_NAME=istio-ingressgateway
+       export INGRESS_NS=istio-system
+       kubectl get svc "$INGRESS_NAME" -n "$INGRESS_NS"
+       export INGRESS_HOST=$(kubectl -n "$INGRESS_NS" get service "$INGRESS_NAME" -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+       export INGRESS_PORT=$(kubectl -n "$INGRESS_NS" get service "$INGRESS_NAME" -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+   Set Gateway URL
+       export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+   Check App Accessible from outside
+       curl -s "http://${GATEWAY_URL}/productpage" | grep -o "<title>.*</title>"
+   Routing virtual service to v1
+       kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
+
+
+
+
+
+
+
+
+x. Security and Authorization
+  Create namespace otherns
+  Create user-auth-service in otherns
+  Exec into user-auth-service in otherns namespace
+  Curl user-data-service from there - curl user-data-service.default.svc.cluster.local:8082/user_data/user1
+  Apply istio/security (strict mTls) - kubectl apply -f istio/security
+  Curl again (fails) - curl user-data-service.default.svc.cluster.local:8082/user_data/user1
+  Curl from default ns - possible !! -> prevent through authorizationPolicy
+  Apply istio/policy - kubectl apply -f istio/policy
+  For SPIFFE Identity - Apply serviceaccount for user-auth-service in otherns - kubectl apply -f kubernetes/user-auth-service-sa.yaml
+  Redeploy user-auth-service with "serviceAccountName" parameter
+
+
 
